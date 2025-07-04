@@ -22,8 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "input.h"
-#include "device.h"
+#include "class_general_input.h"
+#include "class_general_output.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -279,12 +279,12 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-	Output* left_red = new_Device(LEFT_RED_GPIO_Port, LEFT_RED_Pin);
-	Input*  button_1 = new_Input(BUTTON_1_GPIO_Port, BUTTON_1_Pin, left_red);
+	IOutput* left_red = new_GeneralOutput(LEFT_RED_GPIO_Port, LEFT_RED_Pin);
+	IInput*  button_1 = new_GeneralInput(BUTTON_1_GPIO_Port, BUTTON_1_Pin, NOMAL_CLOSE, left_red);
   /* Infinite loop */
   for(;;)
   {
-	  button_1->update(button_1, NOMAL_CLOSE);
+	  button_1->update(button_1);
 	  button_1->on_rising_edge(button_1);
   }
   /* USER CODE END 5 */
