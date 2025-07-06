@@ -1,12 +1,12 @@
 /*
- * class_general_output.c
+ * general_output_class.c
  *
  *  Created on: Jun 30, 2025
  *      Author: vermilion9312
  */
 
 
-#include "class_general_output.h"
+#include <general_output_class.h>
 
 static void turn_general_output_on(IOutput* output)
 {

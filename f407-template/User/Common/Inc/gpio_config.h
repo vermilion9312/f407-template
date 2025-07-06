@@ -8,10 +8,7 @@
 #ifndef INC_GPIO_CONFIG_H_
 #define INC_GPIO_CONFIG_H_
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include "stm32f4xx_hal.h"
+#include <common_include.h>
 
 typedef struct _GPIO_Config GPIO_Config;
 

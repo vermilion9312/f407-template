@@ -57,6 +57,7 @@
 									<listOptionValue builtIn="false" value="../User/Output/Inc"/>
 									<listOptionValue builtIn="false" value="../User/Input/Inc"/>
 									<listOptionValue builtIn="false" value="../User/Common/Inc"/>
+									<listOptionValue builtIn="false" value="../User/Uart/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
@@ -208,5 +209,12 @@
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/f407-template"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/f407-template"/>
+		</configuration>
+	</storageModule>
 </cproject>

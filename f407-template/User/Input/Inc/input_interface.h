@@ -1,12 +1,12 @@
 /*
- * interface_input.h
+ * input_interface.h
  *
  *  Created on: Jul 4, 2025
- *      Author: LeeJooHo
+ *      Author: vermilion9312
  */
 
-#ifndef INPUT_INC_INTERFACE_INPUT_H_
-#define INPUT_INC_INTERFACE_INPUT_H_
+#ifndef INPUT_INC_INPUT_INTERFACE_H_
+#define INPUT_INC_INPUT_INTERFACE_H_
 
 #include "gpio_config.h"
 
@@ -20,4 +20,4 @@ struct _IInput {
 	void (* on_falling_edge)(IInput*);
 };
 
-#endif /* INPUT_INC_INTERFACE_INPUT_H_ */
+#endif /* INPUT_INC_INPUT_INTERFACE_H_ */

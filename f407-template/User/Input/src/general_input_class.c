@@ -1,12 +1,12 @@
 /*
- * class_general_input.c
+ * general_input_class.c
  *
  *  Created on: Jul 4, 2025
  *      Author: vermilion9312
  */
 
 
-#include "class_general_input.h"
+#include <general_input_class.h>
 
 static void update_gerneral_input(IInput* input)
 {
