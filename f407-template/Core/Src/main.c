@@ -18,12 +18,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "class_general_input.h"
-#include "class_general_output.h"
+#include "general_input_class.h"
+#include "general_output_class.h"
+#include "uart_idle_interrupt_class.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,30 +44,28 @@
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart3;
 
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
 /* USER CODE BEGIN PV */
-
+IUart* uart;
+static uint8_t user_buffer[RX_BUFFER_SIZE];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART3_UART_Init(void);
-void StartDefaultTask(void *argument);
-
+static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
-
+void create_instance(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+int _write(int file, char *ptr, int len)
+{
+  HAL_UART_Transmit(&huart3, (uint8_t*) ptr, len, 10);
 
+  return len;
+}
 /* USER CODE END 0 */
 
 /**
@@ -100,48 +98,19 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART3_UART_Init();
+
+  /* Initialize interrupts */
+  MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
+  create_instance();
 
   /* USER CODE END 2 */
 
-  /* Init scheduler */
-  osKernelInitialize();
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
-
-  /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_EVENTS */
-  /* add events, ... */
-  /* USER CODE END RTOS_EVENTS */
-
-  /* Start scheduler */
-  osKernelStart();
-
-  /* We should never get here as control is now taken by the scheduler */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+//  uart->receive(uart);
+  HAL_NVIC_EnableIRQ(USART3_IRQn);
+  HAL_UARTEx_ReceiveToIdle_IT(&huart3, user_buffer, 10);
   while (1)
   {
     /* USER CODE END WHILE */
@@ -194,6 +163,17 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief NVIC Configuration.
+  * @retval None
+  */
+static void MX_NVIC_Init(void)
+{
+  /* USART3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(USART3_IRQn);
 }
 
 /**
@@ -304,28 +284,44 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-/* USER CODE END 4 */
-
-/* USER CODE BEGIN Header_StartDefaultTask */
-/**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
+void on_uart_receive(uint8_t* data, size_t len)
 {
-  /* USER CODE BEGIN 5 */
-	IOutput* left_red = new_GeneralOutput(LEFT_RED_GPIO_Port, LEFT_RED_Pin);
-	IInput*  button_1 = new_GeneralInput(BUTTON_1_GPIO_Port, BUTTON_1_Pin, NOMAL_CLOSE, left_red);
-  /* Infinite loop */
-  for(;;)
-  {
-	  button_1->update(button_1);
-	  button_1->on_rising_edge(button_1);
-  }
-  /* USER CODE END 5 */
+    if (len >= 5 && strncmp((char*)data, "Hello", 5) == 0) {
+        const char* reply = "me too\r\n";
+        HAL_UART_Transmit(&huart3, (uint8_t*)reply, strlen(reply), HAL_MAX_DELAY);
+    }
 }
+
+void create_instance(void)
+{
+	uart = new_UartIdleInterrupt(&huart3, on_uart_receive);
+}
+
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+    if (huart->Instance == USART3)
+    {
+//        uart->set_rx_ready(uart, true);
+//        uart->set_rx_received_length(uart, Size);
+//
+//        if (uart->on_receive_callback)
+//        {
+//            uart->on_receive_callback(user_buffer, Size);
+//        }
+    	HAL_UARTEx_ReceiveToIdle_IT(huart, user_buffer, 10);
+    }
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART3)
+    {
+    	uart->set_tx_done(uart, true);
+    }
+}
+
+/* USER CODE END 4 */
 
 /**
   * @brief  Period elapsed callback in non blocking mode

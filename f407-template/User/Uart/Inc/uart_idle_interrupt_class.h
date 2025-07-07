@@ -10,22 +10,23 @@
 
 #include <uart_interface.h>
 
+#define RX_BUFFER_SIZE 256
+
 typedef struct _CUartIdleInterrupt CUartIdleInterrupt;
 
 struct _CUartIdleInterrupt {
 	IUart base;
 	UART_HandleTypeDef* huart;
 
-	uint8_t* rx_buffer;
-	size_t   rx_buffer_size;
+	uint8_t rx_buffer[RX_BUFFER_SIZE];
 	volatile bool rx_ready;
 	size_t rx_received_length;
 
-	const uint8_t* tx_buffer;
-	size_t tx_length;
 	volatile bool tx_done;
 
-	void (* on_receive_callback)(uint8_t* data, size_t len);
+
 };
+
+IUart* new_UartIdleInterrupt(UART_HandleTypeDef* huart, void (* on_receive_callback)(uint8_t* data, size_t len));
 
 #endif /* UART_INC_UART_IDLE_INTERRUPT_CLASS_H_ */

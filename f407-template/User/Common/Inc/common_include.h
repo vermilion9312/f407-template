@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 #include <stm32f4xx_hal.h>
 
 #endif /* COMMON_INC_COMMON_INCLUDE_H_ */
