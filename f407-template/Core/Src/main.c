@@ -109,10 +109,11 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 //  uart->receive(uart);
-  HAL_NVIC_EnableIRQ(USART3_IRQn);
-  HAL_UARTEx_ReceiveToIdle_IT(&huart3, user_buffer, 10);
+  HAL_UARTEx_ReceiveToIdle_IT(&huart3, user_buffer, sizeof(user_buffer));
   while (1)
   {
+	  HAL_UART_Transmit_IT(&huart3, user_buffer, sizeof(user_buffer));
+	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -300,26 +301,32 @@ void create_instance(void)
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-    if (huart->Instance == USART3)
-    {
-//        uart->set_rx_ready(uart, true);
-//        uart->set_rx_received_length(uart, Size);
-//
-//        if (uart->on_receive_callback)
-//        {
-//            uart->on_receive_callback(user_buffer, Size);
-//        }
-    	HAL_UARTEx_ReceiveToIdle_IT(huart, user_buffer, 10);
-    }
+	if (huart->Instance == USART3)
+	{
+
+		HAL_GPIO_TogglePin(LEFT_RED_GPIO_Port, LEFT_RED_Pin);
+		HAL_UARTEx_ReceiveToIdle_IT(&huart3, user_buffer, sizeof(user_buffer));
+	}
+//    if (huart->Instance == USART3)
+//    {
+////        uart->set_rx_ready(uart, true);
+////        uart->set_rx_received_length(uart, Size);
+////
+////        if (uart->on_receive_callback)
+////        {
+////            uart->on_receive_callback(user_buffer, Size);
+////        }
+//    	HAL_UARTEx_ReceiveToIdle_IT(huart, user_buffer, 10);
+//    }
 }
 
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
-{
-    if (huart->Instance == USART3)
-    {
-    	uart->set_tx_done(uart, true);
-    }
-}
+//void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+//{
+//    if (huart->Instance == USART3)
+//    {
+//    	uart->set_tx_done(uart, true);
+//    }
+//}
 
 /* USER CODE END 4 */
 
