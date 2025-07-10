@@ -8,6 +8,7 @@
 #ifndef INPUT_INC_GENERAL_INPUT_CLASS_H_
 #define INPUT_INC_GENERAL_INPUT_CLASS_H_
 
+#include <event_listener_interface.h>
 #include <general_output_class.h>
 #include <input_interface.h>
 
@@ -16,7 +17,9 @@ typedef enum { NOMAL_OPEN, NOMAL_CLOSE } InputType;
 typedef struct _CGeneralInput CGeneralInput;
 
 struct _CGeneralInput {
+	IEventListener base;
 	IInput base;
+	IOutput* output_list[10];
 	IOutput* output;
 	GPIO_Config gpio_config;
 	InputType input_type;

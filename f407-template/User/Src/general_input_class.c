@@ -8,6 +8,18 @@
 
 #include <general_input_class.h>
 
+static void add_event_listener(IEventListener* listener, EventType type, EventCallback callback, IOutput* output)
+{
+	CGeneralInput* this = (CGeneralInput*) listener;
+
+
+}
+
+static void on_event(IEventListener* listener)
+{
+
+}
+
 static void update_gerneral_input(IInput* input)
 {
 	CGeneralInput* this = (CGeneralInput*) input;
