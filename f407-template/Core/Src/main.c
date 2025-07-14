@@ -114,6 +114,7 @@ int main(void)
   {
 	  HAL_UART_Transmit_IT(&huart3, user_buffer, sizeof(user_buffer));
 	  HAL_Delay(1000);
+	  HAL_GPIO_ReadPin(GPIOx, GPIO_Pin)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

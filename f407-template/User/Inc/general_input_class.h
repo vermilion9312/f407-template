@@ -1,32 +1,29 @@
 /*
  * general_input_class.h
  *
- *  Created on: Jul 4, 2025
- *      Author: vermilion9312
+ *  Created on: Jul 13, 2025
+ *      Author: vermi
  */
 
-#ifndef INPUT_INC_GENERAL_INPUT_CLASS_H_
-#define INPUT_INC_GENERAL_INPUT_CLASS_H_
+#ifndef INC_GENERAL_INPUT_CLASS_H_
+#define INC_GENERAL_INPUT_CLASS_H_
 
-#include <event_listener_interface.h>
-#include <general_output_class.h>
 #include <input_interface.h>
 
-typedef enum { NOMAL_OPEN, NOMAL_CLOSE } InputType;
+typedef enum {
+	NOMAL_OPEN,
+	NOMAL_CLOSE
+} InputType;
 
 typedef struct _CGeneralInput CGeneralInput;
 
 struct _CGeneralInput {
-	IEventListener base;
 	IInput base;
-	IOutput* output_list[10];
-	IOutput* output;
-	GPIO_Config gpio_config;
+	GPIO_TypeDef* GPIOx;
+	uint16_t GPIO_Pin;
 	InputType input_type;
 	bool last_state;
 	bool state;
 };
 
-IInput* new_GeneralInput(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, InputType input_type, IOutput* output);
-
-#endif /* INPUT_INC_GENERAL_INPUT_CLASS_H_ */
+#endif /* INC_GENERAL_INPUT_CLASS_H_ */

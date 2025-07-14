@@ -1,23 +1,23 @@
 /*
  * input_interface.h
  *
- *  Created on: Jul 4, 2025
- *      Author: vermilion9312
+ *  Created on: Jul 13, 2025
+ *      Author: vermi
  */
 
-#ifndef INPUT_INC_INPUT_INTERFACE_H_
-#define INPUT_INC_INPUT_INTERFACE_H_
+#ifndef INC_INPUT_INTERFACE_H_
+#define INC_INPUT_INTERFACE_H_
 
-#include "gpio_config.h"
+#include <common_include.h>
 
 typedef struct _IInput IInput;
 
 struct _IInput {
 	void (* update)(IInput*);
-	void (* on_detecting)(IInput*);
-	void (* on_pressing)(IInput*);
-	void (* on_rising_edge)(IInput*);
-	void (* on_falling_edge)(IInput*);
+	bool (* is_pressed)(IInput*);
+	bool (* is_detected)(IInput*);
+	bool (* is_rising_edge)(IInput*);
+	bool (* is_falling_edge)(IInput*);
 };
 
-#endif /* INPUT_INC_INPUT_INTERFACE_H_ */
+#endif /* INC_INPUT_INTERFACE_H_ */
