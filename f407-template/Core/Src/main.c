@@ -21,9 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "general_input_class.h"
-#include "general_output_class.h"
-#include "uart_idle_interrupt_class.h"
+#include <general_input_class.h>
+#include <general_output_class.h>
+#include <input_listener_class.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,8 +45,7 @@
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-IUart* uart;
-static uint8_t user_buffer[RX_BUFFER_SIZE];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,19 +101,26 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-  create_instance();
+
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-//  uart->receive(uart);
-  HAL_UARTEx_ReceiveToIdle_IT(&huart3, user_buffer, sizeof(user_buffer));
+//  IInput* button = new_GeneralInput(BUTTON_1_GPIO_Port, BUTTON_1_Pin, NOMAL_CLOSE);
+  IOutput* left_red = new_GeneralOutput(LEFT_RED_GPIO_Port, LEFT_RED_Pin, ACTIVE_LOW);
+  IOutput* right_red = new_GeneralOutput(RIGHT_RED_GPIO_Port, RIGHT_RED_Pin, ACTIVE_LOW);
+  IInput*  button = new_GeneralInput(BUTTON_1_GPIO_Port, BUTTON_1_Pin, NOMAL_CLOSE);
+
+  IEventListener* button_listener = new_InputListener(button);
+  button_listener->add_event_listener(button_listener, RISING_EDGE, left_red->toggle, left_red);
+  button_listener->add_event_listener(button_listener, FALLING_EDGE, right_red->toggle, right_red);
+
+
   while (1)
   {
-	  HAL_UART_Transmit_IT(&huart3, user_buffer, sizeof(user_buffer));
-	  HAL_Delay(1000);
-	  HAL_GPIO_ReadPin(GPIOx, GPIO_Pin)
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -286,18 +292,6 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-void on_uart_receive(uint8_t* data, size_t len)
-{
-    if (len >= 5 && strncmp((char*)data, "Hello", 5) == 0) {
-        const char* reply = "me too\r\n";
-        HAL_UART_Transmit(&huart3, (uint8_t*)reply, strlen(reply), HAL_MAX_DELAY);
-    }
-}
-
-void create_instance(void)
-{
-	uart = new_UartIdleInterrupt(&huart3, on_uart_receive);
-}
 
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
@@ -305,8 +299,6 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	if (huart->Instance == USART3)
 	{
 
-		HAL_GPIO_TogglePin(LEFT_RED_GPIO_Port, LEFT_RED_Pin);
-		HAL_UARTEx_ReceiveToIdle_IT(&huart3, user_buffer, sizeof(user_buffer));
 	}
 //    if (huart->Instance == USART3)
 //    {
